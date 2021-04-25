@@ -1,11 +1,11 @@
 import './App.css';
 import PatientManagement from './components/PatientManagement/PatientManagement';
-import ReduceCount from './components/ReduceCount/ReduceCount';
+import ReducerCount from './components/ReducerCount/ReducerCount';
 
 function App() {
   return (
-    <div>
-      <ReduceCount />
+    <div className="App">
+      <ReducerCount />
       <PatientManagement />
     </div>
   );

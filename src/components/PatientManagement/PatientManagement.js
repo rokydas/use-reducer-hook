@@ -1,43 +1,33 @@
-import React, { useReducer, useRef } from 'react';
-import { patientReducer, patientState } from '../../reducers/patientReducer';
+import React, { useReducer, useState } from 'react';
+import { patientInitialState, patientReducers } from '../reducers/patientReducer';
 
 const PatientManagement = () => {
 
-    const nameRef = useRef();
-
-    const [state, dispatch] = useReducer(patientReducer, patientState);
-
-    const handleSubmit = (e) => {
-        dispatch({
-            type: 'ADD_PATIENT',
-            name: nameRef.current.value,
-            id: state.patients.length + 1,
-        });
-        nameRef.current.value = '';
-        e.preventDefault();
+    const [state, dispatch] = useReducer(patientReducers, patientInitialState);
+    const [patient, setPatient] = useState({});
+    const handleBlur = (e) => {
+        const newPatient = { ...patient };
+        newPatient[e.target.name] = e.target.value;
+        setPatient(newPatient);
     }
 
     return (
-        <div className="text-center">
-            <h1>Manage Doctor Chamber: {state.patients.length} </h1>
-
-            <form action="">
-                <input type="text" className="form-control"
-                    placeholder="Patient Name" name="patientName"
-                    ref={nameRef} required />
-                <button type="submit" onClick={handleSubmit} className="btn btn-primary" >Add Patient</button>
-            </form>
-
+        <div>
+            <h1>Patient: {state.patients.length}</h1>
             {
-                state.patients.map(pt => <div
-                    key={pt.id}
-                >
-                    <span>{pt.name}</span> &nbsp;
-                        <button onClick={() => dispatch({ type: 'REMOVE_PATIENT', id: pt.id})} className="custom-danger">Delete</button>
-                </div>)
+                state.patients.map(patient =>
+                    <div>
+                        <li>Name: {patient.name} Id: {patient.id}
+                        <button onClick={() => dispatch({type: 'DELETE', id: patient.id})}>Delete</button></li>
+                    </div>
+                )
             }
 
-
+            <form onSubmit={(e) => { e.preventDefault() }}>
+                <input type="text" name="name" placeholder="Patient Name" onBlur={handleBlur} /> <br /> <br />
+                <input type="text" name="age" placeholder="Patient Age" /> <br /> <br />
+                <button onClick={() => { dispatch({ type: 'INCREMENT', patient: { name: patient.name, age: patient.age, id: new Date().toGMTString() } }) }}>Increment</button>
+            </form>
         </div>
     );
 };
